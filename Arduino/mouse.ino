@@ -35,7 +35,7 @@ void setup()
   }
   Serial.println(" connected");
 
-  Udp.begin(localUdpPort);
+  Udp.begin(8888);
   Serial.printf("UDP Server Started");
   
 }
@@ -67,26 +67,20 @@ void loop()
   Serial.print(" Degrees F = ");
   Serial.println(myIMU.readTempF(), 4);
 
+  float ay = myIMU.readFloatAccelY();
+  float ax = myIMU.readFloatAccelX();
+  float az = myIMU.readFloatAccelZ();
+  float gx = myIMU.readFloatGyroX();
+  float gy = myIMU.readFloatGyroY();
+  float gz = myIMU.readFloatGyroZ();
+
+
+//  sprintf(format,"a %.4f %.4f %.4f \ng %.4f %.4f %.4f ", ax, ay, az, gx, gy,);
+
+
+  Udp.beginPacket("10.66.219.233", 8888);
+  Udp.write("a " + new String(ax) + " " + new String(ay) + " " + new String(az) + "g " + new String(gx) + " " + new String(gy) + " " + new String(gz);
+  Udp.endPacket();
+
   delay(100);
-
-  /*
-  int packetSize = Udp.parsePacket();
-  if (packetSize)
-  {
-    // receive incoming UDP packets
-    Serial.printf("Received %d bytes from %s, port %d\n", packetSize, Udp.remoteIP().toString().c_str(), Udp.remotePort());
-    int len = Udp.read(incomingPacket, 255);
-    if (len > 0)
-    {
-      incomingPacket[len] = 0;
-    }
-    Serial.printf("UDP packet contents: %s\n", incomingPacket);
-    */
-
-    // send back a reply, to the IP address and port we got the packet from
-    Udp.beginPacket(Udp.remoteIP(), Udp.remotePort());
-    Udp.write(replyPacket);
-    Udp.endPacket();
-  }
-
 }

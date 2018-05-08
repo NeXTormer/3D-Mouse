@@ -1,7 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using System.Collections;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
@@ -9,8 +8,8 @@ using System.Threading;
 
 public class NetworkReceiver : MonoBehaviour {
 
-    private static UdpClient m_Client;
-    private static Thread m_Thread;
+    private UdpClient m_Client;
+    private Thread m_Thread;
     
 
 	void Start () {
@@ -27,7 +26,6 @@ public class NetworkReceiver : MonoBehaviour {
             IPEndPoint endpoint = new IPEndPoint(IPAddress.Any, 0);
 
             byte[] receiveBytes = m_Client.Receive(ref endpoint);
-
             //lock (lockObject)
             {
                 string data = Encoding.ASCII.GetString(receiveBytes);
