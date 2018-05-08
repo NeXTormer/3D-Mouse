@@ -3,10 +3,10 @@
 #include "Wire.h"
 #include "SPI.h"
 
-LSM6DS3 myIMU(0x6A)
-; //Default constructor is I2C, addr 0x6B
+LSM6DS3 myIMU(0x6A); //Default constructor is I2C, addr 0x6B
 
-void setup() {
+void setup() 
+{
   // put your setup code here, to run once:
   Serial.begin(115200);
   delay(1000); //relax...
