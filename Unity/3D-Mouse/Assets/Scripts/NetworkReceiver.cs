@@ -5,11 +5,14 @@ using System.Net;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading;
+using UnityEngine.UI;
 
 public class NetworkReceiver : MonoBehaviour {
 
     private UdpClient m_Client;
     private Thread m_Thread;
+
+    public Text text;
     
 
 	void Start () {
@@ -30,6 +33,7 @@ public class NetworkReceiver : MonoBehaviour {
             {
                 string data = Encoding.ASCII.GetString(receiveBytes);
                 Debug.Log(data);
+                text.text = data;
             }
         }
 
