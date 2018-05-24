@@ -13,9 +13,18 @@ public class NetworkReceiver : MonoBehaviour {
     private Thread m_Thread;
 
     public Text text;
-    
 
-	void Start () {
+    private string stoff;
+
+    float ax = 0;
+    float ay = 0;
+    float az = 0;
+    float gx = 0;
+    float gy = 0;
+    float gz = 0;
+
+
+    void Start () {
         m_Thread = new Thread(new ThreadStart(Run));
         m_Thread.Start();
     }
@@ -32,16 +41,37 @@ public class NetworkReceiver : MonoBehaviour {
             //lock (lockObject)
             {
                 string data = Encoding.ASCII.GetString(receiveBytes);
-                Debug.Log(data);
-                text.text = data;
+                
+                stoff = data;
+
+                string[] split = data.Split('\n');
+                
+                float.TryParse(split[1], out ax);
+                float.TryParse(split[2], out ay);
+                float.TryParse(split[3], out az);
+                float.TryParse(split[5], out gx);
+                float.TryParse(split[6], out gy);
+                float.TryParse(split[7], out gz);
+
+                Debug.Log(gx);
+                Debug.Log(gy);
+                Debug.Log(gz);
+
+
             }
         }
 
     }
+
+    void FixedUpdate()
+    {
+        float div = 40;
+        transform.Rotate(new Vector3(gx/div, gy/div, gz/div));
+    }
 	
 	void Update () {
-		
-	}
+        text.text = stoff;
+    }
 
     void OnApplicationQuit()
     {

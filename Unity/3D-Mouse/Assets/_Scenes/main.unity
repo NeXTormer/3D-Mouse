@@ -175,7 +175,7 @@ Mesh:
   m_ObjectHideFlags: 0
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
-  m_Name: pb_Mesh11796
+  m_Name: pb_Mesh11828
   serializedVersion: 8
   m_SubMeshes:
   - serializedVersion: 2
@@ -424,8 +424,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -14.3, y: -360}
-  m_SizeDelta: {x: 1891.4, y: 210.6}
+  m_AnchoredPosition: {x: -14.3, y: -213}
+  m_SizeDelta: {x: 1891.4, y: 481.8}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &523332263
 MonoBehaviour:
@@ -453,7 +453,7 @@ MonoBehaviour:
     m_BestFit: 0
     m_MinSize: 10
     m_MaxSize: 124
-    m_Alignment: 5
+    m_Alignment: 8
     m_AlignByGeometry: 0
     m_RichText: 1
     m_HorizontalOverflow: 0
@@ -571,7 +571,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ab0902962ccd9f94b88cefbdadb5f0ef, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  text: {fileID: 0}
+  text: {fileID: 523332263}
 --- !u!1 &1281296409
 GameObject:
   m_ObjectHideFlags: 0
