@@ -71,6 +71,10 @@ public class NetworkReceiver : MonoBehaviour {
 	
 	void Update () {
         text.text = stoff;
+        if(Input.GetKeyDown("r"))
+        {
+            transform.rotation.Set(0, 0, 0, 0);
+        }
     }
 
     void OnApplicationQuit()

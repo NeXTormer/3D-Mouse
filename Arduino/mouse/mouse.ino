@@ -30,22 +30,7 @@ void setup()
   delay(1000);
   Serial.println("Processor came out of reset.\n");
   
-  //Call .begin() to configure the IMU
   
-
-  Serial.printf("Connecting to %s ", ssid);
-  WiFi.begin(ssid, password);
-  while (WiFi.status() != WL_CONNECTED)
-  {
-    delay(500);
-    Serial.print(".");
-  }
-  Serial.println(" connected");
-
-  Udp.begin(8888);
-  Serial.printf("UDP Server Started");
-
-
   Serial.println("reading offset...");
 
   float ay = myIMU.readFloatAccelY();
@@ -83,6 +68,25 @@ void setup()
    Serial.println(gy_offset);
    Serial.println(gz_offset);
    
+  
+  
+  
+  
+
+  Serial.printf("Connecting to %s ", ssid);
+  WiFi.begin(ssid, password);
+  while (WiFi.status() != WL_CONNECTED)
+  {
+    delay(500);
+    Serial.print(".");
+  }
+  Serial.println(" connected");
+
+  Udp.begin(8888);
+  Serial.printf("UDP Server Started");
+
+
+  
 
   
 }
