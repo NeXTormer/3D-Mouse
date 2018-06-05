@@ -27,7 +27,10 @@ void setup()
   Serial.begin(115200);
   delay(1000);
   Serial.println("Processor came out of reset.\n");
-  
+
+  pinMode(16, OUTPUT);
+  digitalWrite(16, LOW);
+
   
   Serial.println("reading offset...");
 
