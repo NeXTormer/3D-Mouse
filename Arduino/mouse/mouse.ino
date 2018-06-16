@@ -32,7 +32,7 @@ const int RGB_GREEN = 14;
 const int RGB_BLUE = 12;
 const int BUTTON = 15;
 
-const int OFFSET_MEASUREMENTS = 100;
+const float OFFSET_MEASUREMENTS = 100.0f;
 const int OFFSET_DELAY = 10;
 
 unsigned const int port = 8888;
@@ -40,9 +40,9 @@ unsigned const int port = 8888;
 /* === */
 
 LSM6DS3 myIMU( I2C_MODE, 0x6A );
-WiFiUDP Udp;
+WiFiUDP udp;
 
-char incomingPacket[255];
+char packetBuffer[3];
 bool button_state = false;
 
 float ax_offset = 0;
@@ -103,7 +103,12 @@ void setup()
 
   PRINT("Reading offset...");
 
-  float ax, ay, az, gx, gy, gz;
+  float ax = 0.0f;
+  float ay = 0.0f;
+  float az = 0.0f;
+  float gx = 0.0f;
+  float gy = 0.0f;
+  float gz = 0.0f;
 
   for (float i = 0; i < OFFSET_MEASUREMENTS; i++)
   {
@@ -142,10 +147,17 @@ void setup()
     delay(500);
     PRINT(".");
   }
-  PRINT(" connected");
+  PRINT("connected");
+  PRINT(WiFi.localIP());
 
-  Udp.begin(8888);
+  udp.begin(8888);
   PRINT("UDP Server Started"); 
+
+  //Send pilot packet
+  udp.beginPacket(ip, port);
+  udp.write(0x42);
+  udp.endPacket();
+
 
   RGB(0x00FF00);
 }
@@ -153,8 +165,21 @@ void setup()
 
 void loop()
 {
-  PRINT(millis());
 
+  int packet = udp.parsePacket();
+  if(packet)
+  {
+    PRINT("Received packet");
+
+    int size = udp.read(packetBuffer, 3);
+
+    int color = (packetBuffer[0] << 16) | (packetBuffer[1] << 8) | packetBuffer[2];
+    
+    PRINT(color);
+    RGB(color);
+  }
+
+  PRINT(millis());
   float ax = myIMU.readFloatAccelX();
   float ay = myIMU.readFloatAccelY();
   float az = myIMU.readFloatAccelZ();
@@ -163,7 +188,7 @@ void loop()
   float gz = myIMU.readFloatGyroZ() - gz_offset;
   bool button = readButton();
   
-  Udp.beginPacket(ip, port);
+  udp.beginPacket(ip, port);
   String data = "t ";
   data += millis();
   data += " a \n";
@@ -187,10 +212,8 @@ void loop()
   char data2[data.length()];
   data.toCharArray(data2, data.length());
 
-  Udp.write(data2);
-  Udp.endPacket();
-
-  //delay(10);
+  udp.write(data2);
+  udp.endPacket();
 }
 
 
@@ -248,6 +271,5 @@ bool readButton()
 
 void buttonInterrupt()
 {
- button_state = true; 
+  button_state = true; 
 }
-

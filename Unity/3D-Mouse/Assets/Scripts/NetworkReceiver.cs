@@ -13,8 +13,12 @@ public class NetworkReceiver : MonoBehaviour {
     private Thread m_Thread;
 
     public Text text;
+    public string mouseIP;
+    public int port = 8888;
 
-    private string stoff;
+
+    private bool receivedIP = true;
+    private string m_ReceivedData;
 
     float ax = 0;
     float ay = 0;
@@ -27,37 +31,57 @@ public class NetworkReceiver : MonoBehaviour {
     void Start () {
         m_Thread = new Thread(new ThreadStart(Run));
         m_Thread.Start();
+
     }
 
     public void Run()
     {
-        m_Client = new UdpClient(8888);
+        m_Client = new UdpClient(port);
+
 
         while (true)
         {
-            IPEndPoint endpoint = new IPEndPoint(IPAddress.Any, 0);
-
-            byte[] receiveBytes = m_Client.Receive(ref endpoint);
-            //lock (lockObject)
+            if(!receivedIP)
             {
-                string data = Encoding.ASCII.GetString(receiveBytes);
-                
-                stoff = data;
+                IPEndPoint endpoint = new IPEndPoint(IPAddress.Any, 0);
+                byte[] receiveBytes = m_Client.Receive(ref endpoint);
+                if (receiveBytes[0] == 0x42)
+                {
+                    receivedIP = true;
+                    mouseIP = endpoint.Address.ToString();
+                    Debug.Log("Received IP: " + mouseIP);
 
-                string[] split = data.Split('\n');
-                
-                float.TryParse(split[1], out ax);
-                float.TryParse(split[2], out ay);
-                float.TryParse(split[3], out az);
-                float.TryParse(split[5], out gx);
-                float.TryParse(split[6], out gy);
-                float.TryParse(split[7], out gz);
-                
-
+                }
             }
+            else
+            {
+        
+                IPEndPoint endpoint = new IPEndPoint(IPAddress.Any, 0);
+
+                byte[] receiveBytes = m_Client.Receive(ref endpoint);
+                //lock (lockObject)
+                {
+                    string data = Encoding.ASCII.GetString(receiveBytes);
+
+                    m_ReceivedData = data;
+
+                    string[] split = data.Split('\n');
+
+                    float.TryParse(split[1], out ax);
+                    float.TryParse(split[2], out ay);
+                    float.TryParse(split[3], out az);
+                    float.TryParse(split[5], out gx);
+                    float.TryParse(split[6], out gy);
+                    float.TryParse(split[7], out gz);
+
+                }
+                   
+            }
+            
         }
 
     }
+   
 
     void FixedUpdate()
     {
@@ -66,7 +90,7 @@ public class NetworkReceiver : MonoBehaviour {
     }
 	
 	void Update () {
-        text.text = stoff;
+        text.text = m_ReceivedData;
         if(Input.GetKeyDown("r"))
         {
             transform.rotation.Set(0, 0, 0, 0);
