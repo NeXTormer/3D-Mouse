@@ -16,7 +16,7 @@
 const char* ssid = "htl-IoT";
 const char* password = "iot..2015";
 const char* ip = "10.66.219.233";
-#elif 1
+#elif 0
 const char* ssid = "OnePlus 6";
 const char* password = "petapeta";
 const char* ip = "192.168.43.35";
@@ -177,7 +177,6 @@ void loop()
     
     PRINT(color);
     RGB(color);
-
   }
 
   PRINT(millis());
@@ -208,6 +207,7 @@ void loop()
   data += button ? "1" : "0";
   data += "\n";
   data += " ";
+  
   PRINT(data);
 
   char data2[data.length()];

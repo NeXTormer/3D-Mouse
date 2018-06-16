@@ -20,11 +20,8 @@ public class RGBColor : MonoBehaviour {
 	void Start () {
         receiver = GetComponent<NetworkReceiver>();
 	}
-	
 
-
-
-	void FixedUpdate ()
+	void Update()
     {
         byte[] data = new byte[3];
 

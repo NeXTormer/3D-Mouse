@@ -58,23 +58,21 @@ public class NetworkReceiver : MonoBehaviour {
                 IPEndPoint endpoint = new IPEndPoint(IPAddress.Any, 0);
 
                 byte[] receiveBytes = m_Client.Receive(ref endpoint);
-                {
-                    Debug.Log("Received Data");
-                    string data = Encoding.ASCII.GetString(receiveBytes);
+                
+                string data = Encoding.ASCII.GetString(receiveBytes);
+                Debug.Log("Received Data" + data);
 
-                    m_ReceivedData = data;
+                m_ReceivedData = data;
 
-                    string[] split = data.Split('\n');
+                string[] split = data.Split('\n');
 
-                    float.TryParse(split[1], out ax);
-                    float.TryParse(split[2], out ay);
-                    float.TryParse(split[3], out az);
-                    float.TryParse(split[5], out gx);
-                    float.TryParse(split[6], out gy);
-                    float.TryParse(split[7], out gz);
+                float.TryParse(split[1], out ax);
+                float.TryParse(split[2], out ay);
+                float.TryParse(split[3], out az);
+                float.TryParse(split[5], out gx);
+                float.TryParse(split[6], out gy);
+                float.TryParse(split[7], out gz);
 
-                }
-                   
             }
             
         }
