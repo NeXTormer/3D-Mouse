@@ -52,11 +52,7 @@ public class NetworkReceiver : MonoBehaviour {
                 float.TryParse(split[5], out gx);
                 float.TryParse(split[6], out gy);
                 float.TryParse(split[7], out gz);
-
-                Debug.Log(gx);
-                Debug.Log(gy);
-                Debug.Log(gz);
-
+                
 
             }
         }

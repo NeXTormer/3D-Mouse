@@ -6,8 +6,25 @@
 
 LSM6DS3 myIMU( I2C_MODE, 0x6A );
 
+
+#if 0
 const char* ssid = "htl-IoT";
 const char* password = "iot..2015";
+const char* ip = "10.66.219.233";
+#else
+const char* ssid = "OnePlus 6";
+const char* password = "petapeta";
+const char* ip = "192.168.43.35";
+const int RGB_GND = 15;
+#endif
+
+const int RGB_RED = 13;
+const int RGB_GREEN = 14;
+const int RGB_BLUE = 12;
+
+const int BUTTON = 15;
+
+bool button_state = false;
 
 WiFiUDP Udp;
 unsigned int port = 8888;
@@ -20,18 +37,56 @@ float gx_offset = 0;
 float gy_offset = 0;
 float gz_offset = 0;
 
+//function prototypes
+void printserial();
+void RGB(unsigned int value);
+bool readButton();
+void buttonInterrupt();
+
 void setup()
 {
+  RGB(0xFF0000);
+
+  //Interrupt
+  attachInterrupt(BUTTON, buttonInterrupt, RISING);
+
+  //Sensor Setup
   myIMU.begin();
 
   Serial.begin(115200);
   delay(1000);
   Serial.println("Processor came out of reset.\n");
 
+  //PWM
+  analogWriteRange(255);
+
+  //Pins
+
+  //LED_BUILTIN
   pinMode(16, OUTPUT);
   digitalWrite(16, LOW);
 
+  //RGB_LED
+  pinMode(RGB_GND, OUTPUT);
+  pinMode(RGB_RED, OUTPUT);
+  pinMode(RGB_GREEN, OUTPUT);
+  pinMode(RGB_BLUE, OUTPUT);
   
+  digitalWrite(RGB_GND, LOW);
+
+  //BUTTON
+  pinMode(BUTTON, INPUT);
+  
+
+
+
+
+
+  //Offset
+  
+  RGB(0xFF8C00);
+  delay(200);
+
   Serial.println("reading offset...");
 
   float ay = myIMU.readFloatAccelY();
@@ -51,7 +106,7 @@ void setup()
     gx += myIMU.readFloatGyroX();
     gy += myIMU.readFloatGyroY();
     gz += myIMU.readFloatGyroZ();
-    delay(2);
+    delay(10);
   }
 
   
@@ -68,11 +123,8 @@ void setup()
    Serial.println(gx_offset);
    Serial.println(gy_offset);
    Serial.println(gz_offset);
-   
-  
-  
-  
-  
+
+  RGB(0x3AE4FF);   
 
   Serial.printf("Connecting to %s ", ssid);
   WiFi.begin(ssid, password);
@@ -84,12 +136,9 @@ void setup()
   Serial.println(" connected");
 
   Udp.begin(8888);
-  Serial.printf("UDP Server Started");
+  Serial.printf("UDP Server Started"); 
 
-
-  
-
-  
+  RGB(0x00FF00);
 }
 
 
@@ -104,7 +153,9 @@ void loop()
   float gy = myIMU.readFloatGyroY() - gy_offset;
   float gz = myIMU.readFloatGyroZ() - gz_offset;
 
-  Udp.beginPacket("10.66.219.233", 8888);
+  bool button = readButton();
+  
+  Udp.beginPacket(ip, port);
   String data = "t ";
   data += millis();
   data += " a \n";
@@ -119,7 +170,10 @@ void loop()
   data += gy;
   data += "\n";
   data += gz;
-
+  data += "\nbtn\n";
+  data += button ? "1" : "0";
+  data += "\n";
+  data += " ";
   Serial.println(data);
 
   char data2[data.length()];
@@ -128,7 +182,7 @@ void loop()
   Udp.write(data2);
   Udp.endPacket();
 
-  delay(100);
+  //delay(10);
 }
 
 
@@ -155,5 +209,35 @@ void printserial(LSM6DS3 myIMU)
   Serial.println(myIMU.readTempC(), 4);
   Serial.print(" Degrees F = ");
   Serial.println(myIMU.readTempF(), 4);
+}
+
+void RGB(unsigned int color)
+{
+  unsigned int r = color & 0xFF0000;
+  r = r >> 16;
+
+  unsigned int g = color & 0xFF00;
+  g = g >> 8;
+
+  unsigned int b = color & 0xFF;
+  
+  analogWrite(RGB_RED, r);
+  analogWrite(RGB_GREEN, g);
+  analogWrite(RGB_BLUE, b);
+}
+
+bool readButton()
+{
+  if(button_state)
+  {
+    button_state = false;
+    return true;
+  }
+  return false;
+}
+
+void buttonInterrupt()
+{
+ button_state = true; 
 }
 
