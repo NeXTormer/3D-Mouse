@@ -13,12 +13,12 @@ public class NetworkReceiver : MonoBehaviour {
     private Thread m_Thread;
 
     public Text text;
-    
-    public string mouseIP = "0.0.0.0";
+
+    public IPAddress mouseIP = IPAddress.Loopback;
     public int port = 8888;
 
 
-    private bool receivedIP = false;
+    private bool receivedIP = true;
     private string m_ReceivedData;
 
     float ax = 0;
@@ -47,7 +47,7 @@ public class NetworkReceiver : MonoBehaviour {
                 if (receiveBytes[0] == 0x42)
                 {
                     receivedIP = true;
-                    mouseIP = endpoint.Address.ToString();
+                    mouseIP = endpoint.Address;
                     Debug.Log("Received IP: " + mouseIP);
 
                 }
@@ -58,8 +58,8 @@ public class NetworkReceiver : MonoBehaviour {
                 IPEndPoint endpoint = new IPEndPoint(IPAddress.Any, 0);
 
                 byte[] receiveBytes = m_Client.Receive(ref endpoint);
-                //lock (lockObject)
                 {
+                    Debug.Log("Received Data");
                     string data = Encoding.ASCII.GetString(receiveBytes);
 
                     m_ReceivedData = data;

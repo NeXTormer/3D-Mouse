@@ -16,7 +16,7 @@
 const char* ssid = "htl-IoT";
 const char* password = "iot..2015";
 const char* ip = "10.66.219.233";
-#elif 0
+#elif 1
 const char* ssid = "OnePlus 6";
 const char* password = "petapeta";
 const char* ip = "192.168.43.35";
@@ -177,6 +177,7 @@ void loop()
     
     PRINT(color);
     RGB(color);
+
   }
 
   PRINT(millis());
@@ -214,6 +215,7 @@ void loop()
 
   udp.write(data2);
   udp.endPacket();
+
 }
 
 

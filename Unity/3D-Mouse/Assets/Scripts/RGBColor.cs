@@ -33,10 +33,8 @@ public class RGBColor : MonoBehaviour {
         data[2] = Convert.ToByte(sliderBlue.value);
 
         Socket sock = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
-
-        IPAddress serverAddr = IPAddress.Parse(receiver.mouseIP);
-
-        IPEndPoint endPoint = new IPEndPoint(serverAddr, receiver.port);
+        
+        IPEndPoint endPoint = new IPEndPoint(receiver.mouseIP, receiver.port);
 
         sock.SendTo(data, endPoint);
     }
