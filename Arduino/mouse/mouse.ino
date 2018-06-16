@@ -4,31 +4,46 @@
 #include <ESP8266WiFi.h>
 #include <WiFiUdp.h>
 
-LSM6DS3 myIMU( I2C_MODE, 0x6A );
+#define DEBUG
 
+#ifdef DEBUG
+#define PRINT(x); Serial.println(x);
+#else
+#define PRINT(x); ;
+#endif
 
 #if 0
 const char* ssid = "htl-IoT";
 const char* password = "iot..2015";
 const char* ip = "10.66.219.233";
-#else
+#elif 0
 const char* ssid = "OnePlus 6";
 const char* password = "petapeta";
 const char* ip = "192.168.43.35";
-const int RGB_GND = 15;
+#else
+const char* ssid = "Network";
+const char* password = "voneverec";
+const char* ip = "10.0.0.69";
 #endif
 
+const int RGB_GND = 15;
 const int RGB_RED = 13;
 const int RGB_GREEN = 14;
 const int RGB_BLUE = 12;
-
 const int BUTTON = 15;
 
-bool button_state = false;
+const int OFFSET_MEASUREMENTS = 100;
+const int OFFSET_DELAY = 10;
 
+unsigned const int port = 8888;
+
+/* === */
+
+LSM6DS3 myIMU( I2C_MODE, 0x6A );
 WiFiUDP Udp;
-unsigned int port = 8888;
+
 char incomingPacket[255];
+bool button_state = false;
 
 float ax_offset = 0;
 float ay_offset = 0;
@@ -37,25 +52,29 @@ float gx_offset = 0;
 float gy_offset = 0;
 float gz_offset = 0;
 
-//function prototypes
+/* === */
+
 void printserial();
 void RGB(unsigned int value);
 bool readButton();
 void buttonInterrupt();
 
+/* === */
+
 void setup()
 {
   RGB(0xFF0000);
+  PRINT("Starting 3D-Mouse...\n");
+
 
   //Interrupt
   attachInterrupt(BUTTON, buttonInterrupt, RISING);
 
-  //Sensor Setup
+  //Sensor / Serial setup
   myIMU.begin();
 
   Serial.begin(115200);
   delay(1000);
-  Serial.println("Processor came out of reset.\n");
 
   //PWM
   analogWriteRange(255);
@@ -78,27 +97,15 @@ void setup()
   pinMode(BUTTON, INPUT);
   
 
-
-
-
-
-  //Offset
+  //Calculate offset
   
   RGB(0xFF8C00);
-  delay(200);
 
-  Serial.println("reading offset...");
+  PRINT("Reading offset...");
 
-  float ay = myIMU.readFloatAccelY();
-  float ax = myIMU.readFloatAccelX();
-  float az = myIMU.readFloatAccelZ();
-  float gx = myIMU.readFloatGyroX();
-  float gy = myIMU.readFloatGyroY();
-  float gz = myIMU.readFloatGyroZ();
+  float ax, ay, az, gx, gy, gz;
 
-  float tries = 300.0f;
-
-  for (float i = 0; i < tries; i++)
+  for (float i = 0; i < OFFSET_MEASUREMENTS; i++)
   {
     ay += myIMU.readFloatAccelY();
     ax += myIMU.readFloatAccelX();
@@ -106,37 +113,39 @@ void setup()
     gx += myIMU.readFloatGyroX();
     gy += myIMU.readFloatGyroY();
     gz += myIMU.readFloatGyroZ();
-    delay(10);
+    delay(OFFSET_DELAY);
   }
 
-  
-   ax_offset = ax/tries;
-   ay_offset = ay/tries;
-   az_offset = az/tries;
-   gx_offset = gx/tries;
-   gy_offset = gy/tries;
-   gz_offset = gz/tries;
+  ax_offset = ax/OFFSET_MEASUREMENTS;
+  ay_offset = ay/OFFSET_MEASUREMENTS;
+  az_offset = az/OFFSET_MEASUREMENTS;
+  gx_offset = gx/OFFSET_MEASUREMENTS;
+  gy_offset = gy/OFFSET_MEASUREMENTS;
+  gz_offset = gz/OFFSET_MEASUREMENTS;
 
-   Serial.println(ax_offset);
-   Serial.println(ay_offset);
-   Serial.println(az_offset);
-   Serial.println(gx_offset);
-   Serial.println(gy_offset);
-   Serial.println(gz_offset);
+  PRINT("Offset (ax, ay, az, gx, gy, gz):")
+
+  PRINT(ax_offset);
+  PRINT(ay_offset);
+  PRINT(az_offset);
+  PRINT(gx_offset);
+  PRINT(gy_offset);
+  PRINT(gz_offset);
 
   RGB(0x3AE4FF);   
 
-  Serial.printf("Connecting to %s ", ssid);
+  PRINT("Connecting to");
+  PRINT(ssid)
   WiFi.begin(ssid, password);
   while (WiFi.status() != WL_CONNECTED)
   {
     delay(500);
-    Serial.print(".");
+    PRINT(".");
   }
-  Serial.println(" connected");
+  PRINT(" connected");
 
   Udp.begin(8888);
-  Serial.printf("UDP Server Started"); 
+  PRINT("UDP Server Started"); 
 
   RGB(0x00FF00);
 }
@@ -144,7 +153,7 @@ void setup()
 
 void loop()
 {
-  Serial.println(millis());
+  PRINT(millis());
 
   float ax = myIMU.readFloatAccelX();
   float ay = myIMU.readFloatAccelY();
@@ -152,7 +161,6 @@ void loop()
   float gx = myIMU.readFloatGyroX() - gx_offset;
   float gy = myIMU.readFloatGyroY() - gy_offset;
   float gz = myIMU.readFloatGyroZ() - gz_offset;
-
   bool button = readButton();
   
   Udp.beginPacket(ip, port);
@@ -174,7 +182,7 @@ void loop()
   data += button ? "1" : "0";
   data += "\n";
   data += " ";
-  Serial.println(data);
+  PRINT(data);
 
   char data2[data.length()];
   data.toCharArray(data2, data.length());
@@ -188,6 +196,7 @@ void loop()
 
 void printserial(LSM6DS3 myIMU)
 {
+#ifdef DEBUG
   Serial.print("\nAccelerometer:\n");
   Serial.print(" X = ");
   Serial.println(myIMU.readFloatAccelX(), 4);
@@ -209,6 +218,7 @@ void printserial(LSM6DS3 myIMU)
   Serial.println(myIMU.readTempC(), 4);
   Serial.print(" Degrees F = ");
   Serial.println(myIMU.readTempF(), 4);
+#endif
 }
 
 void RGB(unsigned int color)
