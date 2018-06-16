@@ -13,11 +13,12 @@ public class NetworkReceiver : MonoBehaviour {
     private Thread m_Thread;
 
     public Text text;
-    public string mouseIP;
+    
+    public string mouseIP = "0.0.0.0";
     public int port = 8888;
 
 
-    private bool receivedIP = true;
+    private bool receivedIP = false;
     private string m_ReceivedData;
 
     float ax = 0;
@@ -27,11 +28,9 @@ public class NetworkReceiver : MonoBehaviour {
     float gy = 0;
     float gz = 0;
 
-
     void Start () {
         m_Thread = new Thread(new ThreadStart(Run));
         m_Thread.Start();
-
     }
 
     public void Run()
