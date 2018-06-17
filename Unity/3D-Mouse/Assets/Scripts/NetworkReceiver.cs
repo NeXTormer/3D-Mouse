@@ -13,6 +13,7 @@ public class NetworkReceiver : MonoBehaviour {
     private Thread m_Thread;
 
     public Text text;
+    public Toggle toggle;
     public float scaleFactor = 40;
 
     private string stoff;
@@ -23,6 +24,8 @@ public class NetworkReceiver : MonoBehaviour {
     float gx = 0;
     float gy = 0;
     float gz = 0;
+
+    bool button;
 
     public bool receivedIP = false;
     public IPAddress mouseIP = IPAddress.Any;
@@ -59,6 +62,9 @@ public class NetworkReceiver : MonoBehaviour {
                     float.TryParse(split[5], out gx);
                     float.TryParse(split[6], out gy);
                     float.TryParse(split[7], out gz);
+
+
+                    bool.TryParse(split[9], out button);
                 }
 
             }
@@ -67,7 +73,7 @@ public class NetworkReceiver : MonoBehaviour {
                 IPEndPoint endpoint = new IPEndPoint(IPAddress.Any, 0);
 
                 byte[] receiveBytes = m_Client.Receive(ref endpoint);
-                if(receiveBytes[0] == 0x42)
+                //if(receiveBytes[0] == 0x42)
                 {
                     receivedIP = true;
                     mouseIP = endpoint.Address;
@@ -86,10 +92,13 @@ public class NetworkReceiver : MonoBehaviour {
     void Update()
     {
         text.text = stoff;
-        if (Input.GetKeyDown("r"))
+        if (Input.GetKeyDown(KeyCode.Space))
         {
-            transform.rotation.Set(0, 0, 0, 0);
+            transform.localRotation = Quaternion.identity;
         }
+        
+        toggle.isOn = button;
+        
     }
 
     void OnApplicationQuit()

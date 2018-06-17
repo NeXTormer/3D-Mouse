@@ -22,17 +22,10 @@ public class RGBColor : MonoBehaviour {
         StartCoroutine("SendColor");
 	}
 
-	void Update()
-    {
-        
-    }
-
     IEnumerator SendColor()
     {
         for (;;)
-        {
-
-
+        { 
             if (receiver.receivedIP)
             {
                 byte[] data = new byte[3];
@@ -48,9 +41,7 @@ public class RGBColor : MonoBehaviour {
                 sock.SendTo(data, endPoint);
 
             }
-
-
-            yield return new WaitForSeconds(.001f);
+            yield return new WaitForSeconds(.005f);
         }
     }
 }

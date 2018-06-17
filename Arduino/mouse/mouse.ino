@@ -83,7 +83,7 @@ void setup()
 
   //LED_BUILTIN
   pinMode(16, OUTPUT);
-  digitalWrite(16, LOW);
+  digitalWrite(16, HIGH);
 
   //RGB_LED
   pinMode(RGB_GND, OUTPUT);
@@ -189,8 +189,8 @@ void loop()
   float gx = myIMU.readFloatGyroX() - gx_offset;
   float gy = myIMU.readFloatGyroY() - gy_offset;
   float gz = myIMU.readFloatGyroZ() - gz_offset;
-  bool button = readButton();
-  
+  //bool button = readButton();
+  bool button = digitalRead(BUTTON);
   udp.beginPacket(ip, port);
   String data = "t ";
   data += millis();
@@ -215,7 +215,7 @@ void loop()
   char data2[data.length()];
   data.toCharArray(data2, data.length());
 
-  //PRINT(data2);
+  PRINT(data2);
 
   udp.write(data2);
   udp.endPacket();
