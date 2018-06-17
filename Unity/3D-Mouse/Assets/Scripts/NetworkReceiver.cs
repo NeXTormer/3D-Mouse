@@ -95,7 +95,7 @@ public class NetworkReceiver : MonoBehaviour {
     void Update()
     {
         text.text = stoff;
-        if (Input.GetKeyDown(KeyCode.Space))
+        if (Input.GetKeyDown(KeyCode.Space) || Input.touchCount > 0)
         {
             transform.localRotation = Quaternion.identity;
         }

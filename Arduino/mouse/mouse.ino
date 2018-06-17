@@ -20,6 +20,10 @@ const char* ip = "10.66.219.233";
 const char* ssid = "OnePlus 6";
 const char* password = "petapeta";
 const char* ip = "192.168.43.35";
+#elif 1
+const char* ssid = "Network";
+const char* password = "voneverec";
+const char* ip = "10.0.0.36";
 #else
 const char* ssid = "Network";
 const char* password = "voneverec";
