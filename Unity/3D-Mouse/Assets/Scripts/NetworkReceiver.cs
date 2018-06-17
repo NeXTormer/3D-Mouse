@@ -13,7 +13,7 @@ public class NetworkReceiver : MonoBehaviour {
     private Thread m_Thread;
 
     public Text text;
-    public Toggle toggle;
+    public GameObject buttonDisplay;
     public float scaleFactor = 40;
 
     private string stoff;
@@ -63,8 +63,11 @@ public class NetworkReceiver : MonoBehaviour {
                     float.TryParse(split[6], out gy);
                     float.TryParse(split[7], out gz);
 
-
-                    bool.TryParse(split[9], out button);
+                    int temp = 0;
+                    int.TryParse(split[9], out temp);
+                    if (temp == 0)
+                        button = false;
+                        else button = true;
                 }
 
             }
@@ -96,9 +99,8 @@ public class NetworkReceiver : MonoBehaviour {
         {
             transform.localRotation = Quaternion.identity;
         }
-        
-        toggle.isOn = button;
-        
+        Debug.Log(button);
+        buttonDisplay.SetActive(button);        
     }
 
     void OnApplicationQuit()
