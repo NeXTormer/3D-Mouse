@@ -166,6 +166,7 @@ void setup()
 void loop()
 {
 
+  /*
   int packet = udp.parsePacket();
   if(packet)
   {
@@ -178,6 +179,8 @@ void loop()
     PRINT(color);
     RGB(color);
   }
+
+*/
 
   PRINT(millis());
   float ax = myIMU.readFloatAccelX();
@@ -206,16 +209,19 @@ void loop()
   data += "\nbtn\n";
   data += button ? "1" : "0";
   data += "\n";
-  data += " ";
+  data += "";
   
-  PRINT(data);
 
   char data2[data.length()];
   data.toCharArray(data2, data.length());
 
+  PRINT(data2);
+
   udp.write(data2);
   udp.endPacket();
 
+
+  delay(1000);
 }
 
 

@@ -31,8 +31,8 @@ public class RGBColor : MonoBehaviour {
 
         Socket sock = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
         
-        IPEndPoint endPoint = new IPEndPoint(receiver.mouseIP, receiver.port);
+        //IPEndPoint endPoint = new IPEndPoint(receiver.mouseIP, receiver.port);
 
-        sock.SendTo(data, endPoint);
+        //sock.SendTo(data, endPoint);
     }
 }

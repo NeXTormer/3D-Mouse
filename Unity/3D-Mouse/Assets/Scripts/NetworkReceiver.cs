@@ -13,13 +13,9 @@ public class NetworkReceiver : MonoBehaviour {
     private Thread m_Thread;
 
     public Text text;
+    public float scaleFactor = 40;
 
-    public IPAddress mouseIP = IPAddress.Loopback;
-    public int port = 8888;
-
-
-    private bool receivedIP = true;
-    private string m_ReceivedData;
+    private string stoff;
 
     float ax = 0;
     float ay = 0;
@@ -28,41 +24,26 @@ public class NetworkReceiver : MonoBehaviour {
     float gy = 0;
     float gz = 0;
 
-    void Start () {
+
+    void Start()
+    {
         m_Thread = new Thread(new ThreadStart(Run));
         m_Thread.Start();
     }
 
     public void Run()
     {
-        m_Client = new UdpClient(port);
-
+        m_Client = new UdpClient(8888);
 
         while (true)
         {
-            if(!receivedIP)
-            {
-                IPEndPoint endpoint = new IPEndPoint(IPAddress.Any, 0);
-                byte[] receiveBytes = m_Client.Receive(ref endpoint);
-                if (receiveBytes[0] == 0x42)
-                {
-                    receivedIP = true;
-                    mouseIP = endpoint.Address;
-                    Debug.Log("Received IP: " + mouseIP);
+            IPEndPoint endpoint = new IPEndPoint(IPAddress.Any, 0);
 
-                }
-            }
-            else
+            byte[] receiveBytes = m_Client.Receive(ref endpoint);
             {
-        
-                IPEndPoint endpoint = new IPEndPoint(IPAddress.Any, 0);
-
-                byte[] receiveBytes = m_Client.Receive(ref endpoint);
-                
                 string data = Encoding.ASCII.GetString(receiveBytes);
-                Debug.Log("Received Data" + data);
 
-                m_ReceivedData = data;
+                stoff = data;
 
                 string[] split = data.Split('\n');
 
@@ -72,23 +53,20 @@ public class NetworkReceiver : MonoBehaviour {
                 float.TryParse(split[5], out gx);
                 float.TryParse(split[6], out gy);
                 float.TryParse(split[7], out gz);
-
             }
-            
         }
 
     }
-   
 
     void FixedUpdate()
     {
-        float div = 40;
-        transform.Rotate(new Vector3(gx/div, gy/div, gz/div));
+        transform.Rotate(new Vector3(gx / scaleFactor, gy / scaleFactor, gz / scaleFactor));
     }
-	
-	void Update () {
-        text.text = m_ReceivedData;
-        if(Input.GetKeyDown("r"))
+
+    void Update()
+    {
+        text.text = stoff;
+        if (Input.GetKeyDown("r"))
         {
             transform.rotation.Set(0, 0, 0, 0);
         }
