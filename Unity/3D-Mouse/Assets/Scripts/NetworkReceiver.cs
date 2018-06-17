@@ -62,12 +62,13 @@ public class NetworkReceiver : MonoBehaviour {
                     float.TryParse(split[5], out gx);
                     float.TryParse(split[6], out gy);
                     float.TryParse(split[7], out gz);
-
                     int temp = 0;
+
                     int.TryParse(split[9], out temp);
                     if (temp == 0)
                         button = false;
-                        else button = true;
+                    else
+                        button = true;
                 }
 
             }

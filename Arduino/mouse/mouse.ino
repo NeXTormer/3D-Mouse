@@ -172,30 +172,22 @@ void loop()
   int packet = udp.parsePacket();
   if(packet)
   {
-    PRINT("Received packet");
-
     int size = udp.read(packetBuffer, 3);
-
     int color = (packetBuffer[0] << 16) | (packetBuffer[1] << 8) | packetBuffer[2];
-    
-    PRINT(packetBuffer[0]);
-    PRINT(packetBuffer[1]);
-    PRINT(packetBuffer[2]);
-    PRINT(color);
     RGB(color);
   }
 
 
-  //PRINT(millis());
   float ax = myIMU.readFloatAccelX();
   float ay = myIMU.readFloatAccelY();
   float az = myIMU.readFloatAccelZ();
   float gx = myIMU.readFloatGyroX() - gx_offset;
   float gy = myIMU.readFloatGyroY() - gy_offset;
   float gz = myIMU.readFloatGyroZ() - gz_offset;
-  //bool button = readButton();
+
   bool button = digitalRead(BUTTON);
   udp.beginPacket(ip, port);
+  
   String data = "t ";
   data += millis();
   data += " a \n";
