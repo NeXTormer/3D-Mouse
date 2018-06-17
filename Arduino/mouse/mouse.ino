@@ -165,8 +165,6 @@ void setup()
 
 void loop()
 {
-
-  /*
   int packet = udp.parsePacket();
   if(packet)
   {
@@ -176,13 +174,15 @@ void loop()
 
     int color = (packetBuffer[0] << 16) | (packetBuffer[1] << 8) | packetBuffer[2];
     
+    PRINT(packetBuffer[0]);
+    PRINT(packetBuffer[1]);
+    PRINT(packetBuffer[2]);
     PRINT(color);
     RGB(color);
   }
 
-*/
 
-  PRINT(millis());
+  //PRINT(millis());
   float ax = myIMU.readFloatAccelX();
   float ay = myIMU.readFloatAccelY();
   float az = myIMU.readFloatAccelZ();
@@ -215,13 +215,13 @@ void loop()
   char data2[data.length()];
   data.toCharArray(data2, data.length());
 
-  PRINT(data2);
+  //PRINT(data2);
 
   udp.write(data2);
   udp.endPacket();
 
 
-  delay(1000);
+  delay(10);
 }
 
 

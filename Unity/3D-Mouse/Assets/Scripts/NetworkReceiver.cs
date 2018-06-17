@@ -24,6 +24,10 @@ public class NetworkReceiver : MonoBehaviour {
     float gy = 0;
     float gz = 0;
 
+    public bool receivedIP = false;
+    public IPAddress mouseIP = IPAddress.Any;
+    public static int PORT = 8888;
+
 
     void Start()
     {
@@ -33,26 +37,42 @@ public class NetworkReceiver : MonoBehaviour {
 
     public void Run()
     {
-        m_Client = new UdpClient(8888);
+        m_Client = new UdpClient(PORT);
 
         while (true)
-        {
-            IPEndPoint endpoint = new IPEndPoint(IPAddress.Any, 0);
-
-            byte[] receiveBytes = m_Client.Receive(ref endpoint);
+        { 
+            if (receivedIP)
             {
-                string data = Encoding.ASCII.GetString(receiveBytes);
+                IPEndPoint endpoint = new IPEndPoint(IPAddress.Any, 0);
 
-                stoff = data;
+                byte[] receiveBytes = m_Client.Receive(ref endpoint);
+                {
+                    string data = Encoding.ASCII.GetString(receiveBytes);
 
-                string[] split = data.Split('\n');
+                    stoff = data;
 
-                float.TryParse(split[1], out ax);
-                float.TryParse(split[2], out ay);
-                float.TryParse(split[3], out az);
-                float.TryParse(split[5], out gx);
-                float.TryParse(split[6], out gy);
-                float.TryParse(split[7], out gz);
+                    string[] split = data.Split('\n');
+
+                    float.TryParse(split[1], out ax);
+                    float.TryParse(split[2], out ay);
+                    float.TryParse(split[3], out az);
+                    float.TryParse(split[5], out gx);
+                    float.TryParse(split[6], out gy);
+                    float.TryParse(split[7], out gz);
+                }
+
+            }
+            else
+            {
+                IPEndPoint endpoint = new IPEndPoint(IPAddress.Any, 0);
+
+                byte[] receiveBytes = m_Client.Receive(ref endpoint);
+                if(receiveBytes[0] == 0x42)
+                {
+                    receivedIP = true;
+                    mouseIP = endpoint.Address;
+                    Debug.Log("Received IP: " + endpoint.Address.ToString());
+                }
             }
         }
 

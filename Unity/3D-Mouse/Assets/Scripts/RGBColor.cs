@@ -19,20 +19,38 @@ public class RGBColor : MonoBehaviour {
 
 	void Start () {
         receiver = GetComponent<NetworkReceiver>();
+        StartCoroutine("SendColor");
 	}
 
 	void Update()
     {
-        byte[] data = new byte[3];
-
-        data[0] = Convert.ToByte(sliderRed.value);
-        data[1] = Convert.ToByte(sliderGreen.value);
-        data[2] = Convert.ToByte(sliderBlue.value);
-
-        Socket sock = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
         
-        //IPEndPoint endPoint = new IPEndPoint(receiver.mouseIP, receiver.port);
+    }
 
-        //sock.SendTo(data, endPoint);
+    IEnumerator SendColor()
+    {
+        for (;;)
+        {
+
+
+            if (receiver.receivedIP)
+            {
+                byte[] data = new byte[3];
+
+                data[0] = Convert.ToByte(sliderRed.value);
+                data[1] = Convert.ToByte(sliderGreen.value);
+                data[2] = Convert.ToByte(sliderBlue.value);
+
+                Socket sock = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
+
+                IPEndPoint endPoint = new IPEndPoint(receiver.mouseIP, NetworkReceiver.PORT);
+
+                sock.SendTo(data, endPoint);
+
+            }
+
+
+            yield return new WaitForSeconds(.001f);
+        }
     }
 }
