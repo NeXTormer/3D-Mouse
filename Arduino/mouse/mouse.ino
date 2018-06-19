@@ -4,7 +4,7 @@
 #include <ESP8266WiFi.h>
 #include <WiFiUdp.h>
 
-#define DEBUG
+//#define DEBUG
 
 #ifdef DEBUG
 #define PRINT(x); Serial.println(x);
@@ -12,15 +12,16 @@
 #define PRINT(x); ;
 #endif
 
-#if 0
+#if 1
 const char* ssid = "htl-IoT";
 const char* password = "iot..2015";
-const char* ip = "10.66.219.233";
+//const char* ip = "10.66.219.233";
+const char* ip = "10.66.233.102";
 #elif 0
 const char* ssid = "OnePlus 6";
 const char* password = "petapeta";
 const char* ip = "192.168.43.35";
-#elif 1
+#elif 0
 const char* ssid = "Network";
 const char* password = "voneverec";
 const char* ip = "10.0.0.36";
